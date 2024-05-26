@@ -20,7 +20,7 @@ public class TestDataUtil {
         return Author.builder()
                 .id(2L)
                 .name("Robin")
-                .age(25)
+                .age(60)
                 .build();
     }
 
@@ -28,31 +28,31 @@ public class TestDataUtil {
         return Author.builder()
                 .id(3L)
                 .name("Axell")
-                .age(24)
+                .age(60)
                 .build();
     }
 
-    public static Book createTestBookA() {
+    public static Book createTestBookA(final Author author) {
         return Book.builder()
                 .isbn("904-1-4355-1665-1")
                 .title("Computer vision1")
-                .authorId(1L)
+                .author(author)
                 .build();
     }
 
-    public static Book createTestBookB() {
+    public static Book createTestBookB(Author author) {
         return Book.builder()
                 .isbn("904-1-4355-1665-2")
                 .title("Computer vision2")
-                .authorId(1L)
+                .author(author)
                 .build();
     }
 
-    public static Book createTestBookC() {
+    public static Book createTestBookC(Author author) {
         return Book.builder()
                 .isbn("904-1-4355-1665-3")
                 .title("Computer vision3")
-                .authorId(1L)
+                .author(author)
                 .build();
     }
 }

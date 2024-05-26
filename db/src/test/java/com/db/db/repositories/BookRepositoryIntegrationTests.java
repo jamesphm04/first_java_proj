@@ -1,7 +1,6 @@
-package com.db.db.dao.impl;
+package com.db.db.repositories;
 
 import com.db.db.TestDataUtil;
-import com.db.db.dao.AuthorDao;
 import com.db.db.domain.Author;
 import com.db.db.domain.Book;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,27 +18,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class BookDaoImplIntegrationTests {
-    private final AuthorDao authorDao;
-    private final BookDaoImpl underTest;
+public class BookRepositoryIntegrationTests {
+    private BookRepository underTest;
 
     @Autowired
-    public BookDaoImplIntegrationTests(BookDaoImpl underTest, AuthorDao authorDao) {
-
+    public BookRepositoryIntegrationTests(BookRepository underTest) {
         this.underTest = underTest;
-        this.authorDao = authorDao;
     }
 
     @Test
     public void testThatBookCanBeCreatedAndRecalled() {
-        Book book = TestDataUtil.createTestBookA();
         Author author = TestDataUtil.createTestAuthorA();
+        Book book = TestDataUtil.createTestBookA(author);
 
-        authorDao.create(author);
-
-        book.setAuthorId(author.getId());
-        underTest.create(book);
-        Optional<Book> result = underTest.findOne(book.getIsbn());
+        underTest.save(book);
+        Optional<Book> result = underTest.findById(book.getIsbn());
 
         assertThat(result).isPresent();
         assertThat(result.get()).isEqualTo(book);
@@ -49,16 +41,15 @@ public class BookDaoImplIntegrationTests {
     @Test
     public void testThatMultipleBooksCanBeCreatedAndRecalled() {
         Author author = TestDataUtil.createTestAuthorA();
-        authorDao.create(author);
 
-        Book bookA = TestDataUtil.createTestBookA();
-        underTest.create(bookA);
-        Book bookB = TestDataUtil.createTestBookB();
-        underTest.create(bookB);
-        Book bookC = TestDataUtil.createTestBookC();
-        underTest.create(bookC);
+        Book bookA = TestDataUtil.createTestBookA(author);
+        underTest.save(bookA);
+        Book bookB = TestDataUtil.createTestBookB(author);
+        underTest.save(bookB);
+        Book bookC = TestDataUtil.createTestBookC(author);
+        underTest.save(bookC);
 
-        List<Book> result = underTest.find();
+        Iterable<Book> result = underTest.findAll();
         assertThat(result)
                 .hasSize(3)
                 .containsExactly(bookA, bookB, bookC);
@@ -67,27 +58,25 @@ public class BookDaoImplIntegrationTests {
     @Test
     public void testThatBookCanBeUpdated() {
         Author author = TestDataUtil.createTestAuthorA();
-        authorDao.create(author);
 
-        Book bookA = TestDataUtil.createTestBookA();
-        underTest.create(bookA);
+        Book bookA = TestDataUtil.createTestBookA(author);
+        underTest.save(bookA);
         bookA.setTitle("updated_title");
-        underTest.update(bookA.getIsbn(), bookA);
-        Optional<Book> result = underTest.findOne(bookA.getIsbn());
+        underTest.save(bookA);
+        Optional<Book> result = underTest.findById(bookA.getIsbn());
         assertThat(result).isPresent();
         assertThat(result.get()).isEqualTo(bookA);
     }
 
     @Test void testThatBookCanBeDeleted() {
         Author author = TestDataUtil.createTestAuthorA();
-        authorDao.create(author);
 
-        Book bookA = TestDataUtil.createTestBookA();
-        underTest.create(bookA);
+        Book bookA = TestDataUtil.createTestBookA(author);
+        underTest.save(bookA);
 
-        underTest.delete(bookA.getIsbn());
+        underTest.delete(bookA);
 
-        Optional<Book> result = underTest.findOne(bookA.getIsbn());
+        Optional<Book> result = underTest.findById(bookA.getIsbn());
         assertThat(result).isNotPresent();
 
     }
