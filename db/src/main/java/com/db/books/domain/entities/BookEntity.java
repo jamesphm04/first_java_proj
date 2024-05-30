@@ -1,4 +1,4 @@
-package com.db.db.domain;
+package com.db.books.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,15 +11,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "books")
-public class Book {
+@Table(name="books")
+public class BookEntity {
+
     @Id
     private String isbn;
     private String title;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "author_id")
-    private Author author;
-
-//    private Long authorId;
+    @JoinColumn(name="author_id")
+    private AuthorEntity authorEntity;
 }
