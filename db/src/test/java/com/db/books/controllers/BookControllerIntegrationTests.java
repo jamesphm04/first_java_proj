@@ -156,6 +156,7 @@ public class BookControllerIntegrationTests {
         BookDto bookDto = TestDataUtil.createTestBookDtoA(null);
         String updatedTitle = bookDto.getTitle() + "updated";
         bookDto.setTitle(updatedTitle);
+
         String bookJson = objectMapper.writeValueAsString(bookDto);
 
         mockMvc.perform(
